@@ -28,9 +28,9 @@ MENU = {
 resources = {
     "water": 300,
     "milk": 200,
-    "coffee": 100
+    "coffee": 100,
+    "money": 0
 }
-money = 0
 def coffee_machine():
     user_input = input("What would you like? (espresso/latte/cappuccino): \n").lower()
     if user_input == "off":
@@ -40,17 +40,29 @@ def coffee_machine():
         print("Water: " + str(resources["water"])+"ml")
         print("Milk: " + str(resources["milk"])+"ml")
         print("Coffee: " + str(resources["coffee"])+"g")
-        print("Money: $" + str(money))
+        print("Money: $" + str(resources["money"]))
     elif user_input == "latte" or user_input == "espresso" or user_input == "cappuccino":
         for ingredient in ["water", "milk", "coffee"]:
             if MENU[str(user_input)]["ingredients"][ingredient] > resources[ingredient]:
                 print("Sorry, there is not enough" + [ingredient])
                 break
         print("Please insert coins")
-        quarters = int(input("How many quarters?"))
-        dimes = int(input("How many dimes?"))
-        nickels = int(input("How many nickels?"))
-        pennies = int(input("How many pennies?"))
+        quarters = int(input("How many quarters? "))
+        dimes = int(input("How many dimes? "))
+        nickels = int(input("How many nickels? "))
+        pennies = int(input("How many pennies? "))
         total = .25*quarters + .1*dimes + .05*nickels + .01*pennies
-        print("Your total is:", total)
+        if total < MENU[user_input]["cost"]:
+            print("Sorry that's not enough money. Money refunded.")
+            return 0
+        difference = total - MENU[user_input]["cost"]
+        resources["money"] += MENU[user_input]["cost"]
+        if difference > 0:
+            print("Your change is",difference)
+        for ingredient in ["water", "milk", "coffee"]:
+            resources[ingredient] -= MENU[str(user_input)]["ingredients"][ingredient]
+        print("Here is your " + user_input + " Have a nice day!")
+        coffee_machine()
+            
+
 coffee_machine()
